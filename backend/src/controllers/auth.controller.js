@@ -1,4 +1,4 @@
-import { generateToken } from "../config/generateToken";
+import { generateToken } from "../config/generateToken.js";
 import User from "../models/user.model.js";
 
 export const loginUser = async (req, res) => {
@@ -25,6 +25,7 @@ export const loginUser = async (req, res) => {
         _id: user._id,
         name,
         email,
+        credits: user.credits,
       },
     });
   } catch (error) {
