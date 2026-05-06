@@ -14,6 +14,7 @@ export const getCurrentUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        credits: user.credits,
       },
     });
   } catch (error) {

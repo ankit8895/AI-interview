@@ -1,13 +1,14 @@
-import React from "react";
-import { BsRobot } from "react-icons/bs";
-import { IoSparkles } from "react-icons/io5";
-import { motion } from "motion/react";
-import { FcGoogle } from "react-icons/fc";
-import { auth, provider } from "../utils/firebase.js";
 import { signInWithPopup } from "firebase/auth";
-import { axiosInstance } from "../lib/axios.js";
+import { motion } from "motion/react";
+import { BsRobot } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
+import { IoSparkles } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import { userLogin } from "../redux/reducers/userReducer.js";
+import { auth, provider } from "../utils/firebase.js";
 
-const AuthPage = () => {
+const AuthPage = ({ isPopup = false }) => {
+  const dispatch = useDispatch();
   const handleGoogleAuth = async () => {
     try {
       const response = await signInWithPopup(auth, provider);
@@ -15,21 +16,20 @@ const AuthPage = () => {
       let name = User.displayName;
       let email = User.email;
 
-      await axiosInstance("/api/auth/login", {
-        name,
-        email,
-      });
+      dispatch(userLogin({ name, email }));
     } catch (error) {
       console.error("Error login:", error);
     }
   };
   return (
-    <div className="w-full min-h-screen bg-[#f3f3f3] flex items-center justify-center px-6 py-20">
+    <div
+      className={`w-full ${isPopup ? "py-4" : "min-h-screen bg-[#f3f3f3] flex items-center justify-center px-6 py-20"} `}
+    >
       <motion.div
         initial={{ opacity: 0, y: -40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.05 }}
-        className="w-full max-w-md p-8 rounded-3xl bg-white shadow-2xl border border-gray-200"
+        className={`w-full ${isPopup ? "max-w-md p-8 rounded-3xl" : "max-w-lg p-12 rounded-4xl"}  bg-white shadow-2xl border border-gray-200`}
       >
         <div className="flex items-center justify-center gap-3 mb-6">
           <div className="bg-black text-white p-2 rounded-lg">
