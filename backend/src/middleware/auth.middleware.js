@@ -3,7 +3,7 @@ import { ENV } from "../config/env.js";
 
 const isAuth = async (req, res, next) => {
   try {
-    const { token } = req.cookie;
+    const { token } = req.cookies;
     if (!token) {
       return res.status(400).json({
         message: "user does not have token",
@@ -20,7 +20,7 @@ const isAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res.statu(500).json({
+    return res.status(500).json({
       message: `Invalid token: ${error}`,
     });
   }
