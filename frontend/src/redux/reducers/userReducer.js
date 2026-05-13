@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../lib/axios";
+import { generateQuestions } from "./interviewReducer";
 
 // USER LOGIN
 export const userLogin = createAsyncThunk(
@@ -43,12 +44,11 @@ const userSlice = createSlice({
     userInfo: null,
     error: null,
   },
-  // reducers: {
-  //   setUserData: (state, action) => {
-  //     state.loading = true;
-  //     state.userInfo = action.payload;
-  //   },
-  // },
+  reducers: {
+    setUserData: (state, action) => {
+      state.userInfo = { ...state.userInfo, ...action.payload };
+    },
+  },
   extraReducers: (builder) => {
     builder
       // LOGIN ADD CASES
@@ -80,9 +80,15 @@ const userSlice = createSlice({
       .addCase(userLogout.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(generateQuestions.fulfilled, (state, action) => {
+        if (state.userInfo) {
+          state.userInfo.credits = action.payload.creditsLeft;
+        }
       });
   },
 });
 
-// export const { setUserData } = userSlice.actions;
+export const { setUserData } = userSlice.actions;
 export const userReducer = userSlice.reducer;

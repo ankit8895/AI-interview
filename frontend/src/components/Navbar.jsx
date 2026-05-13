@@ -57,7 +57,7 @@ const Navbar = () => {
                 setShowCreditPopup(!showCreditPopup);
                 setShowUserPopup(false);
               }}
-              className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition"
+              className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition cursor-pointer"
             >
               <BsCoin size={20} />
               {userInfo?.credits || 0}
@@ -88,7 +88,7 @@ const Navbar = () => {
                 setShowUserPopup(!showUserPopup);
                 setShowCreditPopup(false);
               }}
-              className="w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold"
+              className="w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibol cursor-pointer"
             >
               {userInfo ? (
                 userInfo?.name.slice(0, 1).toUpperCase()

@@ -52,7 +52,12 @@ export const analyzeResume = async (req, res) => {
 
     const aiResponse = await askAI(messages);
 
-    const parsed = JSON.parse(aiResponse);
+    const cleaned = aiResponse
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const parsed = JSON.parse(cleaned);
 
     // remove file from uploads folder
     fs.unlinkSync(filePath);
@@ -185,7 +190,7 @@ export const generateQuestions = async (req, res) => {
     });
 
     res.json({
-      interviewId: Interview._id,
+      interviewId: interview._id,
       creditsLeft: user.credits,
       userName: user.name,
       questions: interview.questions,
@@ -283,7 +288,12 @@ export const submitAnswer = async (req, res) => {
 
     const aiResponse = await askAI(messages);
 
-    const parsed = JSON.parse(aiResponse);
+    const cleaned = aiResponse
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const parsed = JSON.parse(cleaned);
 
     question.answer = answer;
     question.confidence = parsed.confidence;
