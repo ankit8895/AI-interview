@@ -28,7 +28,7 @@ export const generateQuestions = createAsyncThunk(
   "interview/generateQuestions",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance(
+      const response = await axiosInstance.post(
         "/api/interview/generate-questions",
         payload,
       );

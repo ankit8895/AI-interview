@@ -347,7 +347,7 @@ export const getInterviewScore = async (req, res) => {
       : 0;
 
     interview.finalScore = finalScore;
-    interview.status = "completed";
+    interview.status = "Completed";
 
     await interview.save();
 
@@ -366,6 +366,7 @@ export const getInterviewScore = async (req, res) => {
       })),
     });
   } catch (error) {
+    console.error("finishInterview error:", error);
     return res
       .status(500)
       .json({ message: `failed to finish Interview ${error}` });
