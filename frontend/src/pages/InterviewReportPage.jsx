@@ -1,32 +1,28 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { axiosInstance } from "../lib/axios";
 import Analytics from "../components/Analytics";
+import { fetchInterviewReport } from "../redux/reducers/reportsReducer";
 
 const InterviewReportPage = () => {
   const { id } = useParams();
-  const [report, setReport] = useState(null);
+  const dispatch = useDispatch();
+  const { selectedReport, loading } = useSelector(
+    (state) => state.reportsReducer,
+  );
 
   useEffect(() => {
-    const fetchReport = async () => {
-      try {
-        const response = await axiosInstance.get("/api/interview/report/" + id);
-        setReport(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchReport();
-  }, []);
+    dispatch(fetchInterviewReport(id));
+  }, [dispatch, id]);
 
-  if (!report) {
+  if (loading || !selectedReport) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500 text-lg">Loading Report...</p>
       </div>
     );
   }
-  return <Analytics report={report} />;
+  return <Analytics />;
 };
 
 export default InterviewReportPage;

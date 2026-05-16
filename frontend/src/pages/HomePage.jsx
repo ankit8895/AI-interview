@@ -25,9 +25,7 @@ import Navbar from "../components/Navbar";
 const HomePage = () => {
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const navigate = useNavigate();
-  const { loading, userInfo, error } = useSelector(
-    (state) => state.userReducer,
-  );
+  const { userInfo } = useSelector((state) => state.userReducer);
   return (
     <div className="min-h-screen bg-[#f3f3f3] flex flex-col">
       <Navbar />

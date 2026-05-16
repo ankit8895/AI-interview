@@ -4,9 +4,7 @@ import { useSelector } from "react-redux";
 import AuthPage from "../pages/AuthPage";
 
 const AuthPopup = ({ onClose }) => {
-  const { loading, userInfo, error } = useSelector(
-    (state) => state.userReducer,
-  );
+  const { userInfo } = useSelector((state) => state.userReducer);
 
   useEffect(() => {
     if (userInfo) onClose();

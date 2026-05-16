@@ -1,12 +1,12 @@
-import React, { useState } from "react";
 import { motion } from "motion/react";
-import { BsRobot, BsCoin } from "react-icons/bs";
-import { HiOutlineLogout } from "react-icons/hi";
+import { useState } from "react";
+import { BsCoin, BsRobot } from "react-icons/bs";
 import { FaUserAstronaut } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import AuthPopup from "./AuthPopup";
+import { HiOutlineLogout } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { userLogout } from "../redux/reducers/userReducer";
+import AuthPopup from "./AuthPopup";
 
 const Navbar = () => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
@@ -14,9 +14,7 @@ const Navbar = () => {
   const [showAuthPopup, setShowAuthPopup] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, userInfo, error } = useSelector(
-    (state) => state.userReducer,
-  );
+  const { userInfo } = useSelector((state) => state.userReducer);
 
   const handleLogout = async () => {
     try {

@@ -6,9 +6,7 @@ import { useSelector } from "react-redux";
 
 const InterviewPage = () => {
   const [step, setStep] = useState(1);
-  const { questions, interviewId, report } = useSelector(
-    (state) => state.interviewReducer,
-  );
+  const { questions, report } = useSelector((state) => state.interviewReducer);
 
   // When questions are loaded in store → move to interview step
   useEffect(() => {
@@ -22,28 +20,9 @@ const InterviewPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {step === 1 && (
-        <RoleExpResume
-        // onStart={(data) => {
-        //   setInterviewData(data);
-        //   setStep(2);
-        // }}
-        />
-      )}
-      {step === 2 && (
-        <Interview
-        // // interviewData={interviewData}
-        // onFinish={(report) => {
-        //   // setInterviewData(report);
-        //   setStep(3);
-        // }}
-        />
-      )}
-      {step === 3 && (
-        <Analytics
-        // report={interviewData}
-        />
-      )}
+      {step === 1 && <RoleExpResume />}
+      {step === 2 && <Interview />}
+      {step === 3 && <Analytics />}
     </div>
   );
 };

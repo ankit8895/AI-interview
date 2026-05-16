@@ -1,9 +1,11 @@
-import React from "react";
-import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { motion } from "motion/react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { FaArrowLeft } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Area,
   AreaChart,
@@ -13,12 +15,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { resetInterview } from "../redux/reducers/interviewReducer";
 
-const Analytics = ({ report }) => {
+const Analytics = () => {
+  const { selectedReport } = useSelector((state) => state.reportsReducer);
   const navigate = useNavigate();
-  if (!report) {
+  const dispatch = useDispatch();
+  if (!selectedReport) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-500 text-lg">Loading Report...</p>
@@ -32,7 +35,7 @@ const Analytics = ({ report }) => {
     communication = 0,
     correctness = 0,
     questionWiseScore = [],
-  } = report;
+  } = selectedReport;
 
   const questionScoreData = questionWiseScore.map((score, idx) => ({
     name: `Q${idx + 1}`,
@@ -121,7 +124,8 @@ const Analytics = ({ report }) => {
       advice =
         "Good foundation shown. Improve clarity and structure. Practice delivering concise, confident answers with strong supporting examples.";
     } else {
-      advice: "Significant improvement required. Focus on structured thinking, clarity, and confident delivery. Practice answering aloud regularly";
+      advice =
+        "Significant improvement required. Focus on structured thinking, clarity, and confident delivery. Practice answering aloud regularly";
     }
 
     doc.setFillColor(255, 255, 255);
@@ -178,7 +182,10 @@ const Analytics = ({ report }) => {
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="md:mb-10 w-full flex items-start gap-4 flex-wrap">
           <button
-            onClick={() => navigate("/history")}
+            onClick={() => {
+              dispatch(resetInterview());
+              navigate("/");
+            }}
             className="mt-1 p-3 rounded-full bg-white shadow hover:shadow-md transition"
           >
             <FaArrowLeft className="text-gray-600" />
@@ -195,7 +202,7 @@ const Analytics = ({ report }) => {
 
         <button
           onClick={downloadPDF}
-          className="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base text-nowrap"
+          className="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base text-nowrap"
         >
           Download PDF
         </button>

@@ -1,27 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../lib/axios";
+import { useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getUserInterviews } from "../redux/reducers/reportsReducer";
 
 const InterviewHistoryPage = () => {
-  const [interviews, setInterviews] = useState([]);
+  const dispatch = useDispatch();
+  const { interviews } = useSelector((state) => state.reportsReducer);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getMyInterviews = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "/api/interview/get-interviews",
-        );
-
-        setInterviews(response.data.interviews);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getMyInterviews();
+    dispatch(getUserInterviews());
   }, []);
+
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-red-50 py-10">
       <div className="w-[90vw] lg:w-[70vw] max-w-[90%] mx-auto">

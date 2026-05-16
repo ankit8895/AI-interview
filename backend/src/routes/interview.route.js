@@ -7,6 +7,7 @@ import {
   getInterviewScore,
   getUserInterviewHistory,
   submitAnswer,
+  getInterviewReport,
 } from "../controllers/interview.controller.js";
 
 const interviewRouter = express.Router();
@@ -17,6 +18,6 @@ interviewRouter.post("/submit-answer", isAuth, submitAnswer);
 interviewRouter.post("/finish", isAuth, getInterviewScore);
 
 interviewRouter.get("/get-interviews", isAuth, getUserInterviewHistory);
-interviewRouter.get("/report/:id", isAuth, getUserInterviewHistory);
+interviewRouter.get("/report/:id", isAuth, getInterviewReport);
 
 export default interviewRouter;
