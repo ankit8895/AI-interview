@@ -43,6 +43,9 @@ const reportsSlice = createSlice({
     clearSelectedReport: (state) => {
       state.selectedReport = null;
     },
+    setSelectedReport: (state, action) => {
+      state.selectedReport = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,5 +81,5 @@ const reportsSlice = createSlice({
   },
 });
 
-export const { clearSelectedReport } = reportsSlice.actions;
+export const { clearSelectedReport, setSelectedReport } = reportsSlice.actions;
 export const reportsReducer = reportsSlice.reducer;
