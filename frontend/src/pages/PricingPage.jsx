@@ -1,16 +1,37 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../lib/axios";
-import { setUserData } from "../redux/reducers/userReducer";
+import {
+  createUserOrder,
+  resetPayment,
+  verifyUserPayment,
+} from "../redux/reducers/paymentReducer";
 
 const PricingPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedPlan, setSelectedPlan] = useState("free");
-  const [loadingPlan, setLoadingPlan] = useState(null);
+
+  const { loading, success, error } = useSelector(
+    (state) => state.paymentReducer,
+  );
+
+  useEffect(() => {
+    if (success) {
+      alert("Payment Successful 🎉 Credits Added!");
+      dispatch(resetPayment());
+      navigate("/");
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (error) {
+      alert("Payment failed");
+      dispatch(resetPayment());
+    }
+  }, [error]);
 
   const plans = [
     {
@@ -58,46 +79,37 @@ const PricingPage = () => {
 
   const handlePayment = async (plan) => {
     try {
-      setLoadingPlan(plan.id);
-
       const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 500 : 0;
 
-      const response = await axiosInstance.post("/api/payment/order", {
-        planId: plan.id,
-        amount: amount,
-        credits: plan.credits,
-      });
+      const response = await dispatch(
+        createUserOrder({ planId: plan.id, amount, credits: plan.credits }),
+      );
+
+      // if order creation failed, stop here — error is already in store
+      if (createUserOrder.rejected.match(response)) return;
+
+      const order = response.payload;
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_TEST_API_KEY,
-        amount: response.data.order.amount,
+        amount: order.amount,
         currency: "INR",
         name: "Intervuedot.AI",
         description: `${plan.name} - ${plan.credits} Credits`,
-        order_id: response.data.order.id,
+        order_id: order.id,
 
         handler: async function (res) {
-          const verifyPay = await axiosInstance.post(
-            "/api/payment/verify",
-            res,
-          );
-
-          dispatch(setUserData(verifyPay.data.user));
-          alert("Payment Successful 🎉 Credits Added!");
-          navigate("/");
+          dispatch(verifyUserPayment(res));
         },
         theme: {
-          color: "#10b981",
+          color: "#b53026",
         },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
-
-      setLoadingPlan(null);
     } catch (error) {
       console.log(error);
-      setLoadingPlan(null);
     }
   };
 
@@ -137,7 +149,7 @@ const PricingPage = () => {
               )}
 
               {/* DEFAULT TAG */}
-              {plan.badge && (
+              {plan.default && (
                 <div className="absolute top-6 right-6 text-gray-700 bg-gray-200 text-xs px-3 py-1 rounded-full">
                   Default
                 </div>
@@ -173,7 +185,7 @@ const PricingPage = () => {
 
               {!plan.default && (
                 <button
-                  disabled={loadingPlan === plan.id}
+                  disabled={loading}
                   onClick={(e) => {
                     e.stopPropagation();
                     if (!isSelected) setSelectedPlan(plan.id);
@@ -181,7 +193,7 @@ const PricingPage = () => {
                   }}
                   className={`w-full mt-8 py-3 rounded-xl font-semibold transition ${isSelected ? "bg-red-600 text-white hover:opacity-90" : "bg-gray-100 text-gray-700 hover:bg-red-50"}`}
                 >
-                  {loadingPlan === plan.id
+                  {loading && isSelected
                     ? "Processing..."
                     : isSelected
                       ? "Proceed to Pay"
