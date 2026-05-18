@@ -74,7 +74,7 @@ export const verifyPayment = async (req, res) => {
     );
 
     return res.status(200).json({
-      message: "Paymenr verified and credits added",
+      message: "Payment verified and credits added",
       success: true,
       user: updateUser,
     });
