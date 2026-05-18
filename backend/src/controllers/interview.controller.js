@@ -1,5 +1,5 @@
 import fs from "fs";
-import pdfParse from "pdf-parse";
+import { extractText } from "unpdf";
 import { askAI } from "../services/openRouter.service.js";
 import User from "../models/user.model.js";
 import Interview from "../models/interview.model.js";
@@ -13,7 +13,9 @@ export const analyzeResume = async (req, res) => {
     // reads entire content of file and convert to binary data (0,1)
     const fileBuffer = await fs.promises.readFile(filePath);
 
-    const data = await pdfParse(fileBuffer);
+    const data = await extractText(new Uint8Array(fileBuffer), {
+      mergePages: true,
+    });
 
     let resumeText = data.text;
 
