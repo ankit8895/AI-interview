@@ -6,13 +6,21 @@ import { getUserInterviews } from "../redux/reducers/reportsReducer";
 
 const InterviewHistoryPage = () => {
   const dispatch = useDispatch();
-  const { interviews } = useSelector((state) => state.reportsReducer);
+  const { interviews, loading } = useSelector((state) => state.reportsReducer);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getUserInterviews());
-  }, []);
+  }, [dispatch]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500 text-lg">Loading Interview...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-red-50 py-10">
@@ -46,7 +54,7 @@ const InterviewHistoryPage = () => {
               <div
                 key={idx}
                 onClick={() => navigate(`/report/${item._id}`)}
-                className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer brder border-gray-100"
+                className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100"
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
@@ -72,7 +80,7 @@ const InterviewHistoryPage = () => {
 
                     {/* STATUS BADGE */}
                     <span
-                      className={`px-4 py-1 rounded-full text-xs font-medium ${item.status === "completed" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"}`}
+                      className={`px-4 py-1 rounded-full text-xs font-medium ${item.status === "Completed" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"}`}
                     >
                       {item.status}
                     </span>

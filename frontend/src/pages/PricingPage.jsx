@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { motion } from "motion/react";
-import axiosInstance from "../lib/axios";
+import { useState } from "react";
+import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../lib/axios";
 import { setUserData } from "../redux/reducers/userReducer";
 
 const PricingPage = () => {

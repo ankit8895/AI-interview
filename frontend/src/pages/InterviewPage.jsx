@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import Analytics from "../components/Analytics";
 import Interview from "../components/Interview";
 import RoleExpResume from "../components/RoleExpResume";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedReport } from "../redux/reducers/reportsReducer";
 
 const InterviewPage = () => {
+  const dispatch = useDispatch();
   const [step, setStep] = useState(1);
   const { questions, report } = useSelector((state) => state.interviewReducer);
 
@@ -15,7 +17,10 @@ const InterviewPage = () => {
 
   // When report is available in store → move to analytics step
   useEffect(() => {
-    if (report && step === 2) setStep(3);
+    if (report && step === 2) {
+      dispatch(setSelectedReport(report));
+      setStep(3);
+    }
   }, [report]);
 
   return (
