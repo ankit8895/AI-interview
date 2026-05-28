@@ -23,12 +23,6 @@ const isAuth = async (req, res, next) => {
       return res.status(401).json({ message });
     }
 
-    if (!verifyToken) {
-      return res.status(401).json({
-        message: "Invalid token",
-      });
-    }
-
     const user = await User.findById(verifyToken.userId).select("-password");
 
     if (!user)
@@ -37,8 +31,9 @@ const isAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    console.error("[isAuth]", error);
     return res.status(500).json({
-      message: `Invalid token: ${error}`,
+      message: "Internal server error",
     });
   }
 };

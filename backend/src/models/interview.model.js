@@ -1,26 +1,40 @@
 import mongoose from "mongoose";
 
 const questionsSchema = new mongoose.Schema({
-  question: String,
-  difficulty: String,
+  question: {
+    type: String,
+    trim: true,
+  },
+  difficulty: {
+    type: String,
+    enum: ["easy", "medium", "hard"],
+  },
   timeLimit: Number,
   answer: String,
   feedback: String,
   score: {
     type: Number,
     default: 0,
+    min: 0,
+    max: 10,
   },
   confidence: {
     type: Number,
     default: 0,
+    min: 0,
+    max: 10,
   },
   communication: {
     type: Number,
     default: 0,
+    min: 0,
+    max: 10,
   },
   correctness: {
     type: Number,
     default: 0,
+    min: 0,
+    max: 10,
   },
 });
 

@@ -195,8 +195,8 @@ export const generateQuestions = async (req, res) => {
       resumeText: safeResume,
       questions: questionsArray.map((q, index) => ({
         question: q,
-        difficulty: ["easy", "easy", "medium", "medium", "hard"][index],
-        timeLimit: [60, 60, 90, 90, 120][index],
+        difficulty: ["easy", "easy", "medium", "medium", "hard"][index], // question difficulties
+        timeLimit: [60, 60, 90, 90, 120][index], // seconds per difficulty level
       })),
     });
 
