@@ -60,9 +60,10 @@ const startServer = async () => {
   }
 };
 
-// UNGANDLED REJECTION / EXCEPTION GUARDS
+// UNHANDLED REJECTION / EXCEPTION GUARDS
 process.on("unhandledRejection", (reason) => {
-  console.error("[Unhandled Exception]", reason);
+  console.error("[Unhandled Rejection]", reason);
+  process.exit(1);
 });
 
 process.on("uncaughtException", (reason) => {
