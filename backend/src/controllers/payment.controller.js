@@ -47,7 +47,14 @@ export const verifyPayment = async (req, res) => {
       .update(body)
       .digest("hex");
 
-    if (expectedSignature !== razorpay_signature)
+    const sigBuffer = Buffer.from(razorpay_signature, "utf8");
+    const expectedBuffer = Buffer.from(expectedSignature, "utf8");
+
+    const isValid =
+      sigBuffer.length === expectedBuffer.length &&
+      crypto.timingSafeEqual(sigBuffer, expectedBuffer);
+
+    if (!isValid)
       return res.status(400).json({ message: "Invalid payment signature" });
 
     const payment = await Payment.findOne({

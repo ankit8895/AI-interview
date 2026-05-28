@@ -27,7 +27,16 @@ export const askAI = async (messages) => {
 
     return content;
   } catch (error) {
-    console.error("OpenRouter Error:", error?.response?.data || error?.message);
-    throw new Error("OpenRouter API Error");
+    const status = error?.response?.status;
+    console.error(
+      "[OpenRouter]",
+      status,
+      error?.response?.data || error?.message,
+    );
+
+    const err = new Error("OpenRouter API Error");
+    err.statusCode = status === 429 ? 429 : 502;
+    err.cause = error;
+    throw err;
   }
 };
