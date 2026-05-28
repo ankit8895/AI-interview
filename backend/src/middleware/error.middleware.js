@@ -1,5 +1,4 @@
 import multer from "multer";
-import { upload } from "./upload.middleware.js";
 
 // ─── Global Error Handler ─────────────────────────────────────────
 // Must have 4 parameters for Express to recognize it as an error handler
@@ -13,12 +12,12 @@ export const errorHandler = (err, req, res, next) => {
 };
 
 // multer error
-export const multerError = (req, res, next) => {
-  upload.single("resume")(req, res, (err) => {
+export const multerError = (uploadInstance) => (req, res, next) => {
+  uploadInstance.single("resume")(req, res, (err) => {
     if (err instanceof multer.MulterError)
       // LIMIT_FILE_SIZE
       return res.status(400).json({ message: `Upload error: ${err.message}` });
-    else if (err) return res.status(400).json({ message: err.message }); // ONLY PDF, DOC, DOCX files are accepted
+    if (err) return res.status(400).json({ message: err.message }); // ONLY PDF, DOC, DOCX files are accepted
 
     next();
   });

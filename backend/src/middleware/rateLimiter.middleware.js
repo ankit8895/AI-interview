@@ -6,7 +6,7 @@ export const globalLimiter = rateLimit({
   max: 100, // 100 requests per window
   standardHeaders: true,
   legacyHeaders: false,
-  message: { message: "To many requests. Please try again later." },
+  message: { message: "Too many requests. Please try again later." },
 });
 
 //  STRICTER LIMITER FOR AI / PAYMENT ROUTES
