@@ -10,6 +10,18 @@ export const analyzeResume = async (req, res) => {
 
     const filePath = req.file.path;
 
+    if (
+      req.file.mimetype !== "application/pdf" ||
+      req.file.mimetype !== "application/msword" ||
+      req.file.mimetype !==
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      await fs.promises.unlink(filePath);
+      return res
+        .status(400)
+        .json({ message: "Only PDF, DOC, DOCX files are accepted" });
+    }
+
     // reads entire content of file and convert to binary data (0,1)
     const fileBuffer = await fs.promises.readFile(filePath);
 
@@ -49,10 +61,20 @@ export const analyzeResume = async (req, res) => {
       .replace(/```/g, "")
       .trim();
 
-    const parsed = JSON.parse(cleaned);
+    // const parsed = JSON.parse(cleaned);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (error) {
+      await fs.promises.unlink(filePath);
+      return res.status(502).json({
+        message: "AI returned an unreadbale response. Please try again.",
+      });
+    }
 
     // remove file from uploads folder
-    fs.unlinkSync(filePath);
+    await fs.promises.unlink(filePath);
 
     res.json({
       role: parsed.role,
@@ -62,9 +84,8 @@ export const analyzeResume = async (req, res) => {
       resumeText,
     });
   } catch (error) {
-    console.error(error);
     if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+      await fs.promises.unlink(req.file.path);
     }
 
     return res.status(500).json({ message: error?.message });
@@ -165,9 +186,6 @@ export const generateQuestions = async (req, res) => {
         .status(500)
         .json({ message: "AI failed to generate questions" });
 
-    user.credits -= 50;
-    await user.save();
-
     const interview = await Interview.create({
       userId: user._id,
       role,
@@ -180,6 +198,9 @@ export const generateQuestions = async (req, res) => {
         timeLimit: [60, 60, 90, 90, 120][index],
       })),
     });
+
+    user.credits -= 50;
+    await user.save();
 
     res.json({
       interviewId: interview._id,
@@ -198,8 +219,26 @@ export const submitAnswer = async (req, res) => {
   try {
     const { interviewId, questionIndex, answer, timeTaken } = req.body;
 
+    // validate before any DB call
+    if (!interviewId || questionIndex === undefined || questionIndex === null)
+      return res
+        .status(400)
+        .json({ message: "interview id and question index are required" });
+
+    if (typeof questionIndex !== "number" || questionIndex < 0)
+      return res
+        .status(400)
+        .json({ message: "question index must be non-negative number" });
+
     const interview = await Interview.findById(interviewId);
+
+    if (!interview)
+      return res.status(404).json({ message: "Interview not found" });
+
     const question = interview.questions[questionIndex];
+
+    if (!question)
+      return res.status(400).json({ message: "Invalid question index" });
 
     //if no answer submitted by user
     if (!answer) {
@@ -285,7 +324,25 @@ export const submitAnswer = async (req, res) => {
       .replace(/```/g, "")
       .trim();
 
-    const parsed = JSON.parse(cleaned);
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (error) {
+      return res.status(502).json({
+        message: "AI returned an unreadable evaluation. Please try again",
+      });
+    }
+
+    if (
+      typeof parsed.confidence !== "number" ||
+      typeof parsed.communication !== "number" ||
+      typeof parsed.correctness !== "number" ||
+      typeof parsed.finalScore !== "number"
+    ) {
+      return res
+        .status(502)
+        .json({ message: "AI returned an incomplete evaluation" });
+    }
 
     question.answer = answer;
     question.confidence = parsed.confidence;
@@ -310,7 +367,7 @@ export const getInterviewScore = async (req, res) => {
     const interview = await Interview.findById(interviewId);
 
     if (!interview)
-      return res.status(400).json({ message: "failed to find Interview" });
+      return res.status(404).json({ message: "failed to find Interview" });
 
     const totalQuestions = interview.questions.length;
 

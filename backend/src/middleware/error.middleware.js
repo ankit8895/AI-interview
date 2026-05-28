@@ -17,8 +17,8 @@ export const multerError = (req, res, next) => {
   upload.single("resume")(req, res, (err) => {
     if (err instanceof multer.MulterError)
       // LIMIT_FILE_SIZE
-      res.status(400).json({ message: `Upload error: ${err.message}` });
-    else if (err) res.status(400).json({ message: err.message }); // ONLY PDF, DOC, DOCX files are accepted
+      return res.status(400).json({ message: `Upload error: ${err.message}` });
+    else if (err) return res.status(400).json({ message: err.message }); // ONLY PDF, DOC, DOCX files are accepted
 
     next();
   });

@@ -43,7 +43,7 @@ export const logoutUser = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      meesage: `User logout unsuccessful: ${error}`,
+      message: `User logout unsuccessful: ${error}`,
     });
   }
 };
