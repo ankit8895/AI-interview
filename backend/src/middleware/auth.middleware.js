@@ -6,22 +6,33 @@ const isAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      return res.status(400).json({
-        message: "user does not have token",
+      return res.status(401).json({
+        message: "Authentication required",
       });
     }
 
-    const verifyToken = jwt.verify(token, ENV.JWT_SECRET);
+    let verifyToken;
+    try {
+      verifyToken = jwt.verify(token, ENV.JWT_SECRET);
+    } catch (error) {
+      const message =
+        error.name === "TokenExpiredError"
+          ? "Session expired. Please log in again"
+          : "Invalid token";
+
+      return res.status(401).json({ message });
+    }
 
     if (!verifyToken) {
-      return res.status(400).json({
-        message: "user does not have verified token",
+      return res.status(401).json({
+        message: "Invalid token",
       });
     }
 
     const user = await User.findById(verifyToken.userId).select("-password");
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res.status(401).json({ message: "Authentication required" });
 
     req.user = user;
     next();

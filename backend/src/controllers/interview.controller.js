@@ -10,12 +10,13 @@ export const analyzeResume = async (req, res) => {
 
     const filePath = req.file.path;
 
-    if (
-      req.file.mimetype !== "application/pdf" ||
-      req.file.mimetype !== "application/msword" ||
-      req.file.mimetype !==
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
+    const allowedFileTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+
+    if (!allowedFileTypes.includes(req.file.mimetype)) {
       await fs.promises.unlink(filePath);
       return res
         .status(400)
@@ -69,7 +70,7 @@ export const analyzeResume = async (req, res) => {
     } catch (error) {
       await fs.promises.unlink(filePath);
       return res.status(502).json({
-        message: "AI returned an unreadbale response. Please try again.",
+        message: "AI returned an unreadable response. Please try again.",
       });
     }
 
