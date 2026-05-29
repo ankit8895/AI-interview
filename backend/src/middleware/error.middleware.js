@@ -3,6 +3,8 @@ import multer from "multer";
 // ─── Global Error Handler ─────────────────────────────────────────
 // Must have 4 parameters for Express to recognize it as an error handler
 export const errorHandler = (err, req, res, next) => {
+  console.error(`[${new Date().toISOString()}] ERROR:`, err.stack);
+
   const statusCode = err.statusCode || 500;
   const message = statusCode < 500 ? err.message : "Internal server error";
 
