@@ -31,7 +31,7 @@ export const userLogout = createAsyncThunk(
       await axiosInstance.get("/api/auth/logout");
     } catch (error) {
       return rejectWithValue(
-        error?.response?.data?.message || "Logout Failed. try Again",
+        error?.response?.data?.message || "Logout Failed. Try Again",
       );
     }
   },

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userLogout } from "../redux/reducers/userReducer";
 import AuthPopup from "./AuthPopup";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const [showCreditPopup, setShowCreditPopup] = useState(false);
@@ -18,12 +19,13 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      dispatch(userLogout());
+      await dispatch(userLogout()).unwrap();
+      toast.success("Logged out successfully");
       setShowCreditPopup(false);
       setShowUserPopup(false);
       navigate("/");
-      console.log("REACHED HANDLELOGOUT");
     } catch (error) {
+      toast.error("Logout failed. Please try again");
       console.error("Error logout:", error);
     }
   };
@@ -40,7 +42,7 @@ const Navbar = () => {
             <BsRobot size={18} />
           </div>
           <h1 className="font-semibold hidden md:block text-lg">
-            InterviewIQ.ai
+            Intervuedot.AI
           </h1>
         </div>
 
@@ -68,7 +70,7 @@ const Navbar = () => {
                 </p>
                 <button
                   onClick={() => navigate("/pricing")}
-                  className="w-full bg-black text-white py-2 rounded-lg text-sm"
+                  className="w-full bg-black text-white py-2 rounded-lg text-sm cursor-pointer"
                 >
                   Buy more credits
                 </button>

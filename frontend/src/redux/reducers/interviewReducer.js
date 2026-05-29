@@ -14,7 +14,7 @@ export const analyzeResume = createAsyncThunk(
         formData,
       );
 
-      return response.data;
+      return response?.data?.resume;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Resume analysis failed",
@@ -32,7 +32,7 @@ export const generateQuestions = createAsyncThunk(
         "/api/interview/generate-questions",
         payload,
       );
-      return response.data;
+      return response?.data?.questions;
     } catch (error) {
       return rejectWithValue(
         error?.response?.data?.message || "Failed to generate questions",

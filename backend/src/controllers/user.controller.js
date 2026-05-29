@@ -19,7 +19,7 @@ export const getCurrentUser = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "user details not fetched",
+      message: `user details not fetched: ${error}`,
     });
   }
 };
