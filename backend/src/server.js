@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
-import { connectDB } from "./config/db.js";
+import connectDB from "./config/db.js";
 import { ENV } from "./config/env.js";
 
 import { errorHandler } from "./middleware/error.middleware.js";
