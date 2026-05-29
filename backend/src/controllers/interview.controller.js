@@ -62,8 +62,6 @@ export const analyzeResume = async (req, res) => {
       .replace(/```/g, "")
       .trim();
 
-    // const parsed = JSON.parse(cleaned);
-
     let parsed;
     try {
       parsed = JSON.parse(cleaned);
@@ -78,11 +76,14 @@ export const analyzeResume = async (req, res) => {
     await fs.promises.unlink(filePath);
 
     res.json({
-      role: parsed.role,
-      experience: parsed.experience,
-      projects: parsed.projects,
-      skills: parsed.skills,
-      resumeText,
+      message: "Resume analyzed successfully",
+      resume: {
+        role: parsed.role,
+        experience: parsed.experience,
+        projects: parsed.projects,
+        skills: parsed.skills,
+        resumeText,
+      },
     });
   } catch (error) {
     if (req.file && fs.existsSync(req.file.path)) {
@@ -204,15 +205,18 @@ export const generateQuestions = async (req, res) => {
     await user.save();
 
     res.json({
-      interviewId: interview._id,
-      creditsLeft: user.credits,
-      userName: user.name,
-      questions: interview.questions,
+      message: "Interview questions generated",
+      questions: {
+        interviewId: interview._id,
+        creditsLeft: user.credits,
+        userName: user.name,
+        questions: interview.questions,
+      },
     });
   } catch (error) {
     return res
       .status(500)
-      .json({ message: `failed to create interview ${error}` });
+      .json({ message: `failed to create interview: ${error}` });
   }
 };
 
@@ -416,7 +420,6 @@ export const getInterviewScore = async (req, res) => {
       })),
     });
   } catch (error) {
-    console.error("finishInterview error:", error);
     return res
       .status(500)
       .json({ message: `failed to finish Interview ${error}` });

@@ -14,9 +14,12 @@ import Timer from "./Timer";
 const Interview = () => {
   const dispatch = useDispatch();
 
-  const { interviewId, questions, userName, feedbacks } = useSelector(
+  const { interviewId, questions } = useSelector(
     (state) => state.interviewReducer,
   );
+
+  const { userInfo } = useSelector((state) => state.userReducer);
+  const userName = userInfo?.name ?? "there";
 
   const [isIntroPhase, setIsIntroPhase] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
@@ -301,7 +304,7 @@ const Interview = () => {
           )}
 
           <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-md p-6 space-y-5">
-            <div className="flex justify-center items-center">
+            <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">Interview Status</span>
               {isAIPlaying && (
                 <span className="text-sm font-semibold text-red-600">
@@ -395,7 +398,7 @@ const Interview = () => {
 
               <button
                 onClick={handleNext}
-                className="w-full bg-linear-to-r from-red-600 to-teal-500 text-white py-3 rounded-xl shadow-md hover:opacity-90 transition flex items-center justify-center gap-1"
+                className="w-full bg-linear-to-r from-red-600 to-red-500 text-white py-3 rounded-xl shadow-md hover:opacity-90 transition flex items-center justify-center gap-1"
               >
                 Next Question <BsArrowRight size={18} />
               </button>

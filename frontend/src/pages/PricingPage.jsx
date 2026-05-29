@@ -8,6 +8,7 @@ import {
   resetPayment,
   verifyUserPayment,
 } from "../redux/reducers/paymentReducer";
+import toast from "react-hot-toast";
 
 const PricingPage = () => {
   const navigate = useNavigate();
@@ -20,18 +21,18 @@ const PricingPage = () => {
 
   useEffect(() => {
     if (success) {
-      alert("Payment Successful 🎉 Credits Added!");
+      toast.success("Payment Successful 🎉 Credits Added!");
       dispatch(resetPayment());
       navigate("/");
     }
-  }, [success]);
+  }, [success, dispatch, navigate]);
 
   useEffect(() => {
     if (error) {
-      alert("Payment failed");
+      toast.error("Payment failed");
       dispatch(resetPayment());
     }
-  }, [error]);
+  }, [error, dispatch]);
 
   const plans = [
     {
@@ -82,7 +83,11 @@ const PricingPage = () => {
       const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 500 : 0;
 
       const response = await dispatch(
-        createUserOrder({ planId: plan.id, amount, credits: plan.credits }),
+        createUserOrder({
+          planId: plan.id,
+          amount,
+          credits: plan.credits,
+        }).unwrap(),
       );
 
       // if order creation failed, stop here — error is already in store
@@ -99,7 +104,11 @@ const PricingPage = () => {
         order_id: order.id,
 
         handler: async function (res) {
-          dispatch(verifyUserPayment(res));
+          try {
+            await dispatch(verifyUserPayment(res)).unwrap();
+          } catch (error) {
+            console.error(`Payment verification error: ${error}`);
+          }
         },
         theme: {
           color: "#b53026",
@@ -109,7 +118,8 @@ const PricingPage = () => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
-      console.log(error);
+      toast.error("Unable to initiate payment. Please try again.");
+      console.error(`payment order not initiate: ${error}`);
     }
   };
 

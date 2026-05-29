@@ -13,6 +13,8 @@ import {
   generateQuestions,
   setField,
 } from "../redux/reducers/interviewReducer";
+import toast from "react-hot-toast";
+
 const RoleExpResume = () => {
   const dispatch = useDispatch();
   const {
@@ -29,28 +31,39 @@ const RoleExpResume = () => {
   const [resumeFile, setResumeFile] = useState(null);
 
   const handleUploadResume = async () => {
-    if (!resumeFile || analyzing) return;
-    console.log("handleUploadResume");
-    dispatch(analyzeResume(resumeFile));
+    try {
+      if (!resumeFile || analyzing) {
+        toast.error("Resume file not found");
+        return;
+      }
+      await dispatch(analyzeResume(resumeFile)).unwrap();
+      toast.success("Resume analyzed successfully");
+    } catch (err) {
+      toast.error("Resume analysis failed. Please try again");
+      console.error("Uploading failed:", err);
+    }
   };
 
   const handleStart = async () => {
-    const result = await dispatch(
-      generateQuestions({
-        role,
-        experience,
-        mode,
-        resumeText,
-        projects,
-        skills,
-      }),
-    );
+    try {
+      await dispatch(
+        generateQuestions({
+          role,
+          experience,
+          mode,
+          resumeText,
+          projects,
+          skills,
+        }),
+      ).unwrap();
 
-    if (generateQuestions.fulfilled.match(result)) {
-      // optional: show a toast or error message to the user
-      console.error(result.payload);
+      toast.success("Interview is ready");
+    } catch (err) {
+      toast.error("Failed to start interview. Please try again");
+      console.error("Failed to start interview:", err);
     }
   };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -204,7 +217,7 @@ const RoleExpResume = () => {
                   <div>
                     <p className="font-medium text-gray-700 mb-1">Projects:</p>
 
-                    <ul className="list-disclist-inside text-gray-600 space-y-1">
+                    <ul className="list-disc list-inside text-gray-600 space-y-1">
                       {projects.map((p, i) => (
                         <li key={i}>{p}</li>
                       ))}

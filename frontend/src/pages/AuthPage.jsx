@@ -6,6 +6,7 @@ import { IoSparkles } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../redux/reducers/userReducer.js";
 import { auth, provider } from "../utils/firebase.js";
+import toast from "react-hot-toast";
 
 const AuthPage = ({ isPopup = false }) => {
   const dispatch = useDispatch();
@@ -16,8 +17,10 @@ const AuthPage = ({ isPopup = false }) => {
       let name = User.displayName;
       let email = User.email;
 
-      dispatch(userLogin({ name, email }));
+      await dispatch(userLogin({ name, email })).unwrap();
+      toast.success("Login successful");
     } catch (error) {
+      toast.error("Login failed. Try again.");
       console.error("Error login:", error);
     }
   };
