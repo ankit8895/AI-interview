@@ -9,4 +9,5 @@ export const ENV = {
   OPENROUTER_API: process.env.OPENROUTER_API,
   RAZORPAY_TEST_API_KEY: process.env.RAZORPAY_TEST_API_KEY,
   RAZORPAY_TEST_KEY_SECRET: process.env.RAZORPAY_TEST_KEY_SECRET,
+  NODE_ENV: process.env.NODE_ENV,
 };
