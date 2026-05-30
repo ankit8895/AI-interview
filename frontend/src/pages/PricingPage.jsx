@@ -82,18 +82,16 @@ const PricingPage = () => {
     try {
       const amount = plan.id === "basic" ? 100 : plan.id === "pro" ? 500 : 0;
 
-      const response = await dispatch(
+      const order = await dispatch(
         createUserOrder({
           planId: plan.id,
           amount,
           credits: plan.credits,
-        }).unwrap(),
-      );
+        }),
+      ).unwrap();
 
       // if order creation failed, stop here — error is already in store
-      if (createUserOrder.rejected.match(response)) return;
-
-      const order = response.payload;
+      if (createUserOrder.rejected.match(order)) return;
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_TEST_API_KEY,
