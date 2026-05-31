@@ -37,10 +37,25 @@ export const userLogout = createAsyncThunk(
   },
 );
 
+// GET CURRENT USER
+export const getCurrentUser = createAsyncThunk(
+  "user/getCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/api/user/current-user");
+      return response?.data?.user;
+    } catch (error) {
+      return rejectWithValue(
+        error?.response?.data?.message || "User logged out. Login again",
+      );
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    loading: false,
+    loading: true,
     userInfo: null,
     error: null,
   },
@@ -82,10 +97,27 @@ const userSlice = createSlice({
         state.error = action.payload;
       })
 
+      // CREDITS UPDATE
       .addCase(generateQuestions.fulfilled, (state, action) => {
         if (state.userInfo) {
           state.userInfo.credits = action.payload.creditsLeft;
         }
+      })
+
+      // GET CURRENT USER CASES
+      .addCase(getCurrentUser.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userInfo = action.payload;
+      })
+
+      .addCase(getCurrentUser.rejected, (state, action) => {
+        state.loading = false;
+        state.userInfo = null;
+        state.error = action.payload;
       });
   },
 });
