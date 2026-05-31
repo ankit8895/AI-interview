@@ -7,9 +7,15 @@ import { useDispatch } from "react-redux";
 import { userLogin } from "../redux/reducers/userReducer.js";
 import { auth, provider } from "../utils/firebase.js";
 import toast from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AuthPage = ({ isPopup = false }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/";
+
   const handleGoogleAuth = async () => {
     try {
       const response = await signInWithPopup(auth, provider);
@@ -19,6 +25,7 @@ const AuthPage = ({ isPopup = false }) => {
 
       await dispatch(userLogin({ name, email })).unwrap();
       toast.success("Login successful");
+      navigate(from, { replace: true }); // <- sends them back
     } catch (error) {
       toast.error("Login failed. Try again.");
       console.error("Error login:", error);
